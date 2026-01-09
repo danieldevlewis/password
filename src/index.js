@@ -1,7 +1,5 @@
-import Form from './form.js';
-
-new Form();
+import './password_hasher.js';
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('worker.js');
+  navigator.serviceWorker.register('./worker.js');
 }

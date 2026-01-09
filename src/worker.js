@@ -1,11 +1,8 @@
-/* eslint-env serviceworker */
-/* eslint no-restricted-globals: "off" */
-
-const cacheName = 'password-cache-1';
+const cacheName = 'password-cache-2';
 const cacheDomains = [self.location.origin];
 
 self.addEventListener('activate', () => {
-  caches.delete('cache-1');
+  caches.delete('password-cache-1');
 });
 
 self.addEventListener('fetch', (event) => {

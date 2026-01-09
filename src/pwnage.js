@@ -14,11 +14,11 @@ export default async (value) => {
     throw response;
   }
   const data = await response.text();
-  console.log(data);
   let hits = 0;
+
   data.split('\n').some((line) => {
     const parts = line.trim().split(':');
-    if (parts[0] === hash.slice(5)) {
+    if (parts[0] === hex.slice(5)) {
       hits = +parts[1];
       return true;
     }

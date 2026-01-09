@@ -1,5 +1,4 @@
 import { hash } from './native_hasher.js';
-import Store from './store.js';
 import pwnage from './pwnage.js';
 
 const defaultSettings = {

@@ -164,7 +164,7 @@ function convertToDigits(sInput, seed, lenOut) {
  * far more difficult to guess the injected special characters without
  * knowing the master key.
  */
-export async function hash({
+export default async function hash({
   siteTag,
   masterKey,
   hashWordSize,
@@ -177,7 +177,6 @@ export async function hash({
 }) {
   // Start with the SHA1-encrypted master key/site tag.
   let s = await b64HmacSha1(masterKey, siteTag);
-  console.log('x', s);
   // Use the checksum of all characters as a pseudo-randomizing seed to
   // avoid making the injected characters easy to guess.  Note that it
   // isn't random in the sense of not being deterministic (i.e.
