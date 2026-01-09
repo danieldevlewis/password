@@ -3,7 +3,6 @@
 //   - [ ] List
 //   - [ ] Remote save
 // - [ ] Review option usage
-// - [ ] Shadow DOM
 // - [ ] Refactor
 // - [ ] Github hosting
 

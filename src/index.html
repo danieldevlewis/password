@@ -11,11 +11,11 @@
       img-src 'self' data:;
       script-src 'self';
       style-src 'self';
+      manifest-src 'self';
       frame-ancestors 'none';
       connect-src https://api.pwnedpasswords.com/range/;
     "
     />
-    <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="favicon.svg" sizes="any" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon-180.png" />
     <link rel="manifest" href="manifest.json" />
@@ -27,136 +27,141 @@
     ></script>
   </head>
   <body>
-    <password-hasher>
-      <form id="form">
-        <label class="row">
-          Master Key
-          <input
-            id="masterKey"
-            type="password"
-            autofocus
-            autocomplete="off"
-            required
-          />
-        </label>
-
-        <label class="row">
-          Site tag
-          <input
-            type="text"
-            id="siteTag"
-            list="savedSites"
-            required
-            autocomplete="off"
-            autocapitalize="none"
-            autocorrect="off"
-          />
-        </label>
-        <datalist id="savedSites"></datalist>
-
-        <button type="submit" id="generate">Generate</button>
-
-        <label class="row">
-          Hash
-          <div class="flex">
-            <input type="text" id="hash" autocomplete="off" />
-            <button id="copy" type="button" class="icon" title="Copy">
-              <svg viewBox="0 0 640 640">
-                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                <path
-                  d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z"
-                />
-              </svg>
-            </button>
-          </div>
-        </label>
-
-        <details id="details">
-          <summary>More options</summary>
-
-          <button type="button" id="reset">Reset</button>
-          <button type="button" id="delete" hidden>Delete saved</button>
-
-          <div class="buttons">
-            <fieldset>
-              <legend>Requirements</legend>
-              <ul>
-                <li>
-                  <label
-                    ><input type="checkbox" id="requireDigit" checked />
-                    Digits</label
-                  >
-                </li>
-                <li>
-                  <label
-                    ><input type="checkbox" id="requirePunctuation" />
-                    Punctuation</label
-                  >
-                </li>
-                <li>
-                  <label
-                    ><input type="checkbox" id="requireMixedCase" checked />
-                    Mixed Case</label
-                  >
-                </li>
-                <li>
-                  <label><input type="checkbox" id="bangify" /> Bangify</label>
-                </li>
-              </ul>
-            </fieldset>
-
-            <fieldset>
-              <legend>Restrictions</legend>
-              <ul>
-                <li>
-                  <label
-                    ><input type="checkbox" id="restrictSpecial" /> No
-                    Special</label
-                  >
-                </li>
-                <li>
-                  <label
-                    ><input type="checkbox" id="restrictDigits" /> Digits
-                    Only</label
-                  >
-                </li>
-              </ul>
-            </fieldset>
-          </div>
+    <template shadowrootmode="closed">
+      <link rel="stylesheet" href="style.css" />
+      <password-hasher>
+        <form id="form">
+          <label class="row">
+            Master Key
+            <input
+              id="masterKey"
+              type="password"
+              autofocus
+              autocomplete="off"
+              required
+            />
+          </label>
 
           <label class="row">
-            Size
-            <output for="hashWordSize" id="sizeOutput" value="26">26</output>
+            Site tag
             <input
-              type="range"
-              id="hashWordSize"
-              min="4"
-              max="26"
-              value="26"
-              step="2"
-              list="steplist"
+              type="text"
+              id="siteTag"
+              list="savedSites"
+              required
+              autocomplete="off"
+              autocapitalize="none"
+              autocorrect="off"
             />
-            <div class="range-list">
-              <span class="range-list__min">4</span>
-              <span class="range-list__max">26</span>
-            </div>
-            <datalist id="steplist">
-              <option>4</option>
-              <option>6</option>
-              <option>8</option>
-              <option>10</option>
-              <option>12</option>
-              <option>14</option>
-              <option>16</option>
-              <option>18</option>
-              <option>20</option>
-              <option>22</option>
-              <option>24</option>
-              <option>26</option>
-            </datalist>
           </label>
-        </details>
-      </form>
-    </password-hasher>
+          <datalist id="savedSites"></datalist>
+
+          <button type="submit" id="generate">Generate</button>
+
+          <label class="row">
+            Hash
+            <div class="flex">
+              <input type="text" id="hash" autocomplete="off" />
+              <button id="copy" type="button" class="icon" title="Copy">
+                <svg viewBox="0 0 640 640">
+                  <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                  <path
+                    d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </label>
+
+          <details id="details">
+            <summary>More options</summary>
+
+            <button type="button" id="reset">Reset</button>
+            <button type="button" id="delete" hidden>Delete saved</button>
+
+            <div class="buttons">
+              <fieldset>
+                <legend>Requirements</legend>
+                <ul>
+                  <li>
+                    <label
+                      ><input type="checkbox" id="requireDigit" checked />
+                      Digits</label
+                    >
+                  </li>
+                  <li>
+                    <label
+                      ><input type="checkbox" id="requirePunctuation" />
+                      Punctuation</label
+                    >
+                  </li>
+                  <li>
+                    <label
+                      ><input type="checkbox" id="requireMixedCase" checked />
+                      Mixed Case</label
+                    >
+                  </li>
+                  <li>
+                    <label
+                      ><input type="checkbox" id="bangify" /> Bangify</label
+                    >
+                  </li>
+                </ul>
+              </fieldset>
+
+              <fieldset>
+                <legend>Restrictions</legend>
+                <ul>
+                  <li>
+                    <label
+                      ><input type="checkbox" id="restrictSpecial" /> No
+                      Special</label
+                    >
+                  </li>
+                  <li>
+                    <label
+                      ><input type="checkbox" id="restrictDigits" /> Digits
+                      Only</label
+                    >
+                  </li>
+                </ul>
+              </fieldset>
+            </div>
+
+            <label class="row">
+              Size
+              <output for="hashWordSize" id="sizeOutput" value="26">26</output>
+              <input
+                type="range"
+                id="hashWordSize"
+                min="4"
+                max="26"
+                value="26"
+                step="2"
+                list="steplist"
+              />
+              <div class="range-list">
+                <span class="range-list__min">4</span>
+                <span class="range-list__max">26</span>
+              </div>
+              <datalist id="steplist">
+                <option>4</option>
+                <option>6</option>
+                <option>8</option>
+                <option>10</option>
+                <option>12</option>
+                <option>14</option>
+                <option>16</option>
+                <option>18</option>
+                <option>20</option>
+                <option>22</option>
+                <option>24</option>
+                <option>26</option>
+              </datalist>
+            </label>
+          </details>
+        </form>
+      </password-hasher>
+    </template>
   </body>
 </html>

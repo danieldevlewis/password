@@ -1,4 +1,4 @@
-body {
+:host {
   font: 1.2em/1.5 sans-serif;
   margin: auto;
   max-width: 20em;
@@ -96,7 +96,7 @@ button {
 
 .flex {
   display: flex;
-  gap: 0.1em;
+  gap: 0.25em;
 }
 
 .buttons {
