@@ -1,7 +1,6 @@
-import Form from './form';
-import './style.css';
+import Form from './form.js';
 
-new Form(); // eslint-disable-line no-new
+new Form();
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('worker.js');

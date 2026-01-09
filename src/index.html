@@ -1,22 +1,36 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html language="en-gb">
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8" />
     <title>Password hasher</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src https://cdn.polyfill.io <%= htmlWebpackPlugin.options.makeHash(compilation.assets['main.js'].source()) %>; style-src <%= htmlWebpackPlugin.options.makeHash(compilation.assets['main.css'].source()) %>; worker-src 'self'; connect-src https://api.pwnedpasswords.com; img-src data:; block-all-mixed-content">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="data:image/png;base64,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">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" defer src="index.js"></script>
   </head>
   <body>
     <form id="form">
       <label class="row">
         Master Key
-        <input id="masterKey" type="password" autofocus autocomplete="off" required>
+        <input
+          id="masterKey"
+          type="password"
+          autofocus
+          autocomplete="off"
+          required
+        />
       </label>
 
       <label class="row">
         Site tag
-        <input type=text id="siteTag" list="savedSites" required autocomplete="off" autocapitalize="none" autocorrect="off">
+        <input
+          type="text"
+          id="siteTag"
+          list="savedSites"
+          required
+          autocomplete="off"
+          autocapitalize="none"
+          autocorrect="off"
+        />
       </label>
       <datalist id="savedSites" aria-label="Saved sites" class="row"></datalist>
 
@@ -24,7 +38,7 @@
 
       <label class="row">
         Hash
-        <input type=text id="hash" autocomplete="off">
+        <input type="text" id="hash" autocomplete="off" />
       </label>
 
       <details id="details">
@@ -37,42 +51,77 @@
           <fieldset>
             <legend>Requirements</legend>
             <ul>
-              <li><label><input type="checkbox" id="requireDigit" checked> Digits</label></li>
-              <li><label><input type="checkbox" id="requirePunctuation"> Punctuation</label></li>
-              <li><label><input type="checkbox" id="requireMixedCase" checked> Mixed Case</label></li>
-              <li><label><input type="checkbox" id="bangify"> Bangify</label></li>
+              <li>
+                <label
+                  ><input type="checkbox" id="requireDigit" checked />
+                  Digits</label
+                >
+              </li>
+              <li>
+                <label
+                  ><input type="checkbox" id="requirePunctuation" />
+                  Punctuation</label
+                >
+              </li>
+              <li>
+                <label
+                  ><input type="checkbox" id="requireMixedCase" checked /> Mixed
+                  Case</label
+                >
+              </li>
+              <li>
+                <label><input type="checkbox" id="bangify" /> Bangify</label>
+              </li>
             </ul>
           </fieldset>
 
           <fieldset>
             <legend>Restrictions</legend>
             <ul>
-              <li><label><input type="checkbox" id="restrictSpecial"> No Special</label></li>
-              <li><label><input type="checkbox" id="restrictDigits"> Digits Only</label></li>
+              <li>
+                <label
+                  ><input type="checkbox" id="restrictSpecial" /> No
+                  Special</label
+                >
+              </li>
+              <li>
+                <label
+                  ><input type="checkbox" id="restrictDigits" /> Digits
+                  Only</label
+                >
+              </li>
             </ul>
           </fieldset>
         </div>
 
         <label class="row">
           Size <output for="hashWordSize" id="sizeOutput" value="26">26</output>
-          <input type="range" id="hashWordSize" min="4" max="26" value="26" step="2" list="steplist">
+          <input
+            type="range"
+            id="hashWordSize"
+            min="4"
+            max="26"
+            value="26"
+            step="2"
+            list="steplist"
+          />
           <div class="range-list">
             <span class="range-list__min">4</span>
             <span class="range-list__max">26</span>
           </div>
           <datalist id="steplist">
-            <option>4
-            <option>6
-            <option>8
-            <option>10
-            <option>12
-            <option>14
-            <option>16
-            <option>18
-            <option>20
-            <option>22
-            <option>24
-            <option>26
+            <option>4</option>
+            <option>6</option>
+            <option>8</option>
+            <option>10</option>
+            <option>12</option>
+            <option>14</option>
+            <option>16</option>
+            <option>18</option>
+            <option>20</option>
+            <option>22</option>
+            <option>24</option>
+            <option>26</option>
           </datalist>
         </label>
       </details>

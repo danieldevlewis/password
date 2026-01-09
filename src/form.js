@@ -1,6 +1,6 @@
-import hasher from './hasher';
-import Store from './store';
-import pwnage from './pwnage';
+import { hash } from './native_hasher.js';
+import Store from './store.js';
+import pwnage from './pwnage.js';
 
 const defaultSettings = {
   requireDigit: true,
@@ -37,7 +37,9 @@ export default class {
     this.store = new Store();
     this.datalistFallback();
     this.bindPassword('masterKey');
-    ['siteTag', 'hash', ...Object.keys(defaultSettings)].forEach(key => this.bindInput(key));
+    ['siteTag', 'hash', ...Object.keys(defaultSettings)].forEach((key) =>
+      this.bindInput(key),
+    );
     this.bindListeners();
     this.setSettings();
     this.updateDatalist();
@@ -58,9 +60,9 @@ export default class {
   }
 
   hasCustomSettings() {
-    return !Object
-      .entries(defaultSettings)
-      .every(([key, value]) => this[key] === value);
+    return !Object.entries(defaultSettings).every(
+      ([key, value]) => this[key] === value,
+    );
   }
 
   bindInput(id) {
@@ -71,7 +73,9 @@ export default class {
     Object.defineProperty(this, id, {
       enumerable: true,
       get() {
-        return typeof input[prop] === 'string' ? input[prop].trim() : input[prop];
+        return typeof input[prop] === 'string'
+          ? input[prop].trim()
+          : input[prop];
       },
       set(value) {
         input[prop] = value;
@@ -105,19 +109,22 @@ export default class {
   }
 
   bindListeners() {
-    Object.entries(Object.getOwnPropertyDescriptors(this.constructor.prototype))
-      .forEach(([key, value]) => {
-        if (typeof value.value !== 'function') {
-          return;
-        }
-        const parts = key.match(/^on(.*)(Click|Input|Change|Blur|Focus|Submit|Keypress|Cut|Paste|Keydown)$/);
-        if (!parts) {
-          return;
-        }
-        $(lowerFirst(parts[1])).addEventListener(parts[2].toLowerCase(), (e) => {
-          this[key](e);
-        });
+    Object.entries(
+      Object.getOwnPropertyDescriptors(this.constructor.prototype),
+    ).forEach(([key, value]) => {
+      if (typeof value.value !== 'function') {
+        return;
+      }
+      const parts = key.match(
+        /^on(.*)(Click|Input|Change|Blur|Focus|Submit|Keypress|Cut|Paste|Keydown)$/,
+      );
+      if (!parts) {
+        return;
+      }
+      $(lowerFirst(parts[1])).addEventListener(parts[2].toLowerCase(), (e) => {
+        this[key](e);
       });
+    });
   }
 
   onResetClick() {
@@ -176,10 +183,7 @@ export default class {
   onFormSubmit(e) {
     e.preventDefault();
     this.generateHash();
-    this.store.set(
-      this.siteTag,
-      this.settings,
-    );
+    this.store.set(this.siteTag, this.settings);
     $('delete').hidden = false;
   }
 
@@ -206,8 +210,8 @@ export default class {
     this.siteTag = e.target.value;
   }
 
-  generateHash() {
-    this.hash = hasher({
+  async generateHash() {
+    this.hash = await hash({
       ...this.settings,
       masterKey: this.masterKey,
       siteTag: this.siteTag,
@@ -250,7 +254,7 @@ export default class {
       savedSites.innerHTML = '';
     }
     [...this.store.keys()]
-      .map(key => [key.toLowerCase(), key])
+      .map((key) => [key.toLowerCase(), key])
       .sort()
       .map(([, key]) => key)
       .filter(Boolean)
