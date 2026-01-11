@@ -1,33 +1,22 @@
-// Features:
-// - [ ] Manage saved sites
-//   - [ ] List
-//   - [ ] Remote save
-// - [ ] Review option usage
-// - [ ] Refactor
-// - [ ] Github hosting
-
 import generateHash from './native_hasher.js';
 import pwnage from './pwnage.js';
-import LocalStorageStore from './local_storage_store.js';
+import Store from './store.js';
 
 const defaultSettings = {
-  requireDigit: true,
   requirePunctuation: false,
-  requireMixedCase: true,
   restrictSpecial: false,
-  restrictDigits: false,
   hashWordSize: 26,
   bangify: false,
 };
 
 class PasswordHasher extends HTMLElement {
   #masterKey;
-  #localStorageStore;
+  #localStore;
   #clearTimeout;
 
   connectedCallback() {
-    this.#localStorageStore = new LocalStorageStore();
-    this.#updateDateList();
+    this.#localStore = new Store({ keys: Object.keys(defaultSettings) });
+    this.#updateDataList();
     this.#setClearTimeout();
     this.#form.masterKey.addEventListener('input', this.#onMasterKeyInput);
     this.#form.masterKey.addEventListener('change', this.#onMasterKeyChange);
@@ -37,20 +26,23 @@ class PasswordHasher extends HTMLElement {
     this.#form.reset.addEventListener('click', this.#onResetClick);
     this.#form.delete.addEventListener('click', this.#onDeleteClick);
     this.#form.copy.addEventListener('click', this.#onCopyClick);
+    this.#form.export.addEventListener('click', this.#onExportClick);
+    this.#form.import.addEventListener('click', this.#onImportClick);
+    this.querySelector('#importForm').addEventListener(
+      'submit',
+      this.#onImportSubmit,
+    );
     window.addEventListener('focus', () => this.#setClearTimeout());
   }
 
   get #form() {
-    return this.querySelector('form');
+    return this.querySelector('#form');
   }
 
   get #settings() {
     return {
-      requireDigit: this.#form.elements.requireDigit.checked,
       requirePunctuation: this.#form.elements.requirePunctuation.checked,
-      requireMixedCase: this.#form.elements.requireMixedCase.checked,
       restrictSpecial: this.#form.elements.restrictSpecial.checked,
-      restrictDigits: this.#form.elements.restrictDigits.checked,
       hashWordSize: this.#form.elements.hashWordSize.valueAsNumber,
       bangify: this.#form.elements.bangify.checked,
     };
@@ -74,28 +66,13 @@ class PasswordHasher extends HTMLElement {
     }
   };
 
-  #updateDateList() {
-    this.#form.querySelector('#savedSites').replaceChildren(
-      ...[...this.#localStorageStore.keys()]
-        .map((key) => [key.toLowerCase(), key])
-        .sort()
-        .map(([, key]) => key)
-        .filter(Boolean)
-        .map((key) => {
-          const option = document.createElement('option');
-          option.value = key;
-          return option;
-        }),
-    );
-  }
-
   #onSiteTagChange = ({ target }) => {
     target.value = target.value.trim();
     if (!this.#form.checkValidity()) {
       return;
     }
     const { value } = this.#form.siteTag;
-    if (this.#localStorageStore.has(value)) {
+    if (this.#localStore.has(value)) {
       this.#generate();
     }
   };
@@ -116,18 +93,33 @@ class PasswordHasher extends HTMLElement {
   };
 
   #onDeleteClick = () => {
-    this.#localStorageStore.delete(this.#form.elements.siteTag.value);
+    this.#localStore.delete(this.#form.elements.siteTag.value);
     this.#form.elements.delete.hidden = true;
-    this.#updateDateList();
+    this.#updateDataList();
   };
+
+  #updateDataList() {
+    this.#form.querySelector('#savedSites').replaceChildren(
+      ...[...this.#localStore.keys()]
+        .map((key) => [key.toLowerCase(), key])
+        .sort()
+        .map(([, key]) => key)
+        .filter(Boolean)
+        .map((key) => {
+          const option = document.createElement('option');
+          option.value = key;
+          return option;
+        }),
+    );
+  }
 
   #setSaved() {
     const value = this.#form.siteTag.value.trim();
     this.#form.hash.value = '';
     this.#form.hash.classList.remove('ok', 'danger', 'network');
 
-    if (this.#localStorageStore.has(value)) {
-      const settings = this.#localStorageStore.get(value);
+    if (this.#localStore.has(value)) {
+      const settings = this.#localStore.get(value);
       this.#updateSettings(settings);
       this.querySelector('#details').open = !Object.entries(
         defaultSettings,
@@ -142,6 +134,10 @@ class PasswordHasher extends HTMLElement {
 
   async #generate() {
     const siteTag = this.#form.elements.siteTag.value;
+    if (this.#masterKey === siteTag) {
+      this.#form.elements.siteTag.value = '';
+      return;
+    }
     const settings = this.#settings;
     const hash = await generateHash({
       masterKey: this.#masterKey,
@@ -152,8 +148,8 @@ class PasswordHasher extends HTMLElement {
     hashInput.value = hash;
     hashInput.focus();
     hashInput.setSelectionRange(0, hash.length);
-    this.#localStorageStore.set(siteTag, settings);
-    this.#updateDateList();
+    this.#localStore.set(siteTag, settings);
+    this.#updateDataList();
     this.#checkPwnage(hash, hashInput);
   }
 
@@ -179,12 +175,9 @@ class PasswordHasher extends HTMLElement {
   }
 
   #updateSettings(settings) {
-    this.#form.elements.requireDigit.checked = settings.requireDigit;
     this.#form.elements.requirePunctuation.checked =
       settings.requirePunctuation;
-    this.#form.elements.requireMixedCase.checked = settings.requireMixedCase;
     this.#form.elements.restrictSpecial.checked = settings.restrictSpecial;
-    this.#form.elements.restrictDigits.checked = settings.restrictDigits;
     this.#form.elements.hashWordSize.value = settings.hashWordSize;
     this.#form.elements.bangify.checked = settings.bangify;
   }
@@ -204,6 +197,29 @@ class PasswordHasher extends HTMLElement {
       4 * 60 * 60 * 1000,
     );
   }
+
+  #onExportClick = () => {
+    this.querySelector('#exportDialog').showModal();
+    this.querySelector('#exportStore').value = JSON.stringify(
+      Object.fromEntries(this.#localStore),
+      null,
+      '  ',
+    );
+  };
+
+  #onImportClick = () => {
+    this.querySelector('#importDialog').showModal();
+  };
+
+  #onImportSubmit = ({ target }) => {
+    try {
+      this.#localStore.import(JSON.parse(target.elements.importStore.value));
+      this.#updateDataList();
+    } catch (e) {
+      e.preventDefault();
+      alert(`Invalid data ${e.message}`);
+    }
+  };
 }
 
 customElements.define('password-hasher', PasswordHasher);

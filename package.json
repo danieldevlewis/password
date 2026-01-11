@@ -4,7 +4,10 @@
   "description": "Hash based password manager",
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint",
+    "lint": "npm run lint:format && npm run lint:js",
+    "lint:js": "eslint",
+    "lint:format": "prettier . --check",
+    "format": "prettier . --write",
     "start": "webpack-dev-server --mode development --inline=false --hot=false",
     "build": "npm run lint && webpack --mode production",
     "stats": "webpack --mode production --profile --json",
@@ -16,9 +19,6 @@
   },
   "author": "mrdaniellewis",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mrdaniellewis/password/issues"
-  },
   "homepage": "https://github.com/mrdaniellewis/password#readme",
   "dependencies": {},
   "prettier": {

@@ -167,12 +167,12 @@ function convertToDigits(sInput, seed, lenOut) {
 export default async function hash({
   siteTag,
   masterKey,
-  hashWordSize,
-  requireDigit,
+  hashWordSize = 26,
+  requireDigit = true,
   requirePunctuation,
-  requireMixedCase,
+  requireMixedCase = true,
   restrictSpecial,
-  restrictDigits,
+  restrictDigits = false,
   bangify,
 }) {
   // Start with the SHA1-encrypted master key/site tag.

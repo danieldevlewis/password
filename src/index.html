@@ -61,7 +61,7 @@
           <label class="row">
             Hash
             <div class="flex">
-              <input type="text" id="hash" autocomplete="off" />
+              <input type="text" id="hash" readonly autocomplete="off" />
               <button id="copy" type="button" class="icon" title="Copy">
                 <svg viewBox="0 0 640 640">
                   <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
@@ -79,54 +79,26 @@
             <button type="button" id="reset">Reset</button>
             <button type="button" id="delete" hidden>Delete saved</button>
 
-            <div class="buttons">
-              <fieldset>
-                <legend>Requirements</legend>
-                <ul>
-                  <li>
-                    <label
-                      ><input type="checkbox" id="requireDigit" checked />
-                      Digits</label
-                    >
-                  </li>
-                  <li>
-                    <label
-                      ><input type="checkbox" id="requirePunctuation" />
-                      Punctuation</label
-                    >
-                  </li>
-                  <li>
-                    <label
-                      ><input type="checkbox" id="requireMixedCase" checked />
-                      Mixed Case</label
-                    >
-                  </li>
-                  <li>
-                    <label
-                      ><input type="checkbox" id="bangify" /> Bangify</label
-                    >
-                  </li>
-                </ul>
-              </fieldset>
-
-              <fieldset>
-                <legend>Restrictions</legend>
-                <ul>
-                  <li>
-                    <label
-                      ><input type="checkbox" id="restrictSpecial" /> No
-                      Special</label
-                    >
-                  </li>
-                  <li>
-                    <label
-                      ><input type="checkbox" id="restrictDigits" /> Digits
-                      Only</label
-                    >
-                  </li>
-                </ul>
-              </fieldset>
-            </div>
+            <fieldset>
+              <legend>Requirements</legend>
+              <ul>
+                <li>
+                  <label
+                    ><input type="checkbox" id="requirePunctuation" />
+                    Punctuation</label
+                  >
+                </li>
+                <li>
+                  <label><input type="checkbox" id="bangify" /> Bangify</label>
+                </li>
+                <li>
+                  <label
+                    ><input type="checkbox" id="restrictSpecial" /> No
+                    Special</label
+                  >
+                </li>
+              </ul>
+            </fieldset>
 
             <label class="row">
               Size
@@ -159,8 +131,24 @@
                 <option>26</option>
               </datalist>
             </label>
+            <button type="button" id="export">Export</button>
+            <button type="button" id="import">Import</button>
           </details>
         </form>
+        <dialog id="exportDialog">
+          <h1>Export</h1>
+          <textarea readonly id="exportStore"></textarea>
+          <form method="dialog">
+            <button>Close</button>
+          </form>
+        </dialog>
+        <dialog id="importDialog">
+          <h1>Import</h1>
+          <form method="dialog" id="importForm">
+            <textarea id="importStore"></textarea>
+            <button>Import</button>
+          </form>
+        </dialog>
       </password-hasher>
     </template>
   </body>

@@ -32,7 +32,9 @@ fieldset > ul {
 }
 
 input[type='text'],
+input[type='url'],
 input[type='password'],
+textarea,
 select {
   width: 100%;
   box-sizing: border-box;
@@ -74,6 +76,10 @@ input[type='range']::-moz-range-track {
   background-position: calc(0.6em - 0.5px);
 }
 
+textarea {
+  min-height: 20em;
+}
+
 button {
   box-sizing: border-box;
   width: 100%;
@@ -86,6 +92,15 @@ button {
     > svg {
       width: 1em;
     }
+  }
+}
+
+dialog {
+  width: 30em;
+
+  &::backdrop {
+    background-color: #99999999;
+    backdrop-filter: blur(2px);
   }
 }
 
