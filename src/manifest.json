@@ -4,6 +4,6 @@
     { "src": "icon-192.png", "type": "image/png", "sizes": "192x192" },
     { "src": "icon-512.png", "type": "image/png", "sizes": "512x512" }
   ],
-  "start_url": "/",
+  "start_url": "https://danieldevlewis.github.io/password/",
   "display": "standalone"
 }
