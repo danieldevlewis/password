@@ -1,124 +1,155 @@
-<!DOCTYPE HTML>
+<!doctype html>
 <html language="en-gb">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Password hasher</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src https://cdn.polyfill.io 'sha256-YIj9FDCZUiBk798RxrxIwzLo6sD2Bgf7PY3iFaJlyvg='; style-src 'sha256-KcGmAjb1sR47SJT85ikpqRXR5Qg78be/nBwlPaI5Ecw='; worker-src 'self'; connect-src https://api.pwnedpasswords.com; img-src data:; block-all-mixed-content">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="icon" type="image/png" href="data:image/png;base64,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">
-  <style type="text/css">body{font:1.2em/1.5 sans-serif;margin:auto;max-width:20em;padding:1em}button,input{font:inherit}datalist{display:none!important}#hash{font-family:Menlo,Consolas,monospace}#hash.ok{background:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="green" d="M6 10L2.5 6.5l-2 2L6 14l9.5-9.5-2-2L6 10z"/></svg>') right 5px center/1em no-repeat}#hash.danger{background:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="red" d="M92.4 21.7L78.3 7.6h-2.8L50 33 24.5 7.6h-2.8L7.6 21.7v2.8L33 50 7.6 75.5v2.8l14.1 14.1h2.8L50 67l25.5 25.5h2.8l14.1-14.1v-2.8L67 50l25.5-25.5c-.1-1.1-.1-1.7-.1-2.8z"/></svg>') right 5px center/1em no-repeat}#hash.network{background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='768' height='768'%3E%3Cpath d='M758.4 713.6L217.6 172.8 54.4 9.6c-12.8-12.8-32-12.8-44.8 0s-12.8 32 0 44.8l131.2 131.2c-41.6 22.4-80 48-115.2 80-12.8 12.8-16 32-3.2 44.8 6.4 6.4 12.8 9.6 22.4 9.6 6.4 0 16-3.2 22.4-9.6 35.2-32 76.8-57.6 121.6-76.8l73.6 73.6c-44.8 16-86.4 38.4-124.8 67.2-12.8 12.8-16 32-3.2 44.8 6.4 6.4 16 12.8 25.6 12.8 6.4 0 16-3.2 19.2-6.4 38.4-32 86.4-54.4 134.4-67.2l89.6 89.6c-51.2-3.2-105.6 9.6-147.2 41.6-16 9.6-19.2 28.8-6.4 44.8 9.6 12.8 28.8 19.2 44.8 6.4 54.4-38.4 131.2-38.4 185.6 0 6.4 3.2 12.8 6.4 19.2 6.4h6.4l211.2 211.2c6.4 6.4 16 9.6 22.4 9.6s16-3.2 22.4-9.6c9.6-12.8 9.6-32-3.2-44.8zM505.6 339.2c-6.4 16 0 35.2 16 41.6 22.4 12.8 44.8 25.6 67.2 44.8 6.4 6.4 12.8 6.4 19.2 6.4 9.6 0 19.2-3.2 25.6-12.8 12.8-12.8 9.6-35.2-3.2-44.8-25.6-19.2-51.2-38.4-80-51.2-16-6.4-35.2 0-44.8 16zM345.6 192c128-9.6 259.2 32 355.2 118.4 6.4 6.4 12.8 6.4 22.4 6.4s19.2-3.2 25.6-9.6c12.8-12.8 9.6-32-3.2-44.8-108.8-96-256-147.2-403.2-134.4-19.2 0-32 16-28.8 35.2 0 19.2 12.8 32 32 28.8z'/%3E%3Cpath d='M361.6 617.6c-6.4 6.4-9.6 12.8-9.6 22.4s3.2 16 9.6 22.4c6.4 6.4 12.8 9.6 22.4 9.6s16-3.2 22.4-9.6c6.4-6.4 9.6-16 9.6-22.4s-3.2-16-9.6-22.4c-12.8-12.8-32-12.8-44.8 0z'/%3E%3C/svg%3E") right 5px center/1em no-repeat}fieldset{margin:1em 0 0;border-color:#eee;padding-left:.5em;padding-right:.5em}fieldset>ul{margin:0;padding:0;list-style:none}input[type=password],input[type=text],select{width:100%;box-sizing:border-box;padding:.2em;line-height:1.2;font-size:100%}input[type=range]{width:100%;box-sizing:border-box;margin:0}input[type=range]::-moz-range-track{background-image:linear-gradient(90deg,#000 1px,transparent 0);background-size:calc((100% - 1.2em)/11) 40px;background-position:calc(.6em - .5px)}button{box-sizing:border-box;width:100%;cursor:pointer}.row{display:block;margin:1em 0}.buttons{display:flex}.buttons>*,.buttons>button{width:50%;flex:1 auto}fieldset.size>ul{-webkit-columns:3;-moz-columns:3;column-count:3}.hide{display:none}.no-border{border:none;padding:0}.no-border>legend{padding:0;width:100%}[aria-expanded=false]:before{content:"► "}[aria-expanded=true]:before{content:"▼ "}.star:after{content:" ★"}.range-list__min{float:left;font-size:.8em;margin-top:-.5em}.range-list__max{float:right;font-size:.8em;text-align:right;margin-top:-.5em}</style></head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+      default-src 'none';
+      img-src 'self' data:;
+      script-src 'self';
+      style-src 'self';
+      manifest-src 'self';
+      frame-ancestors 'none';
+      connect-src https://api.pwnedpasswords.com/range/;
+    "
+    />
+    <link rel="icon" href="favicon.svg" sizes="any" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon-180.png" />
+    <link rel="manifest" href="manifest.json" />
+    <script
+      type="module"
+      defer
+      src="index.js"
+      integrity="sha256-I8ngvD9a+w9TfrMu6ZiZkuGvvCwTwY1RwKa79VsXnr0="
+    ></script>
+  </head>
   <body>
-    <form id="form">
-      <label class="row">
-        Master Key
-        <input id="masterKey" type="password" autofocus autocomplete="off" required>
-      </label>
+    <template shadowrootmode="closed">
+      <link rel="stylesheet" href="style.css" />
+      <password-hasher>
+        <form id="form">
+          <label class="row">
+            Master Key
+            <input
+              id="masterKey"
+              type="password"
+              autofocus
+              autocomplete="off"
+              required
+            />
+          </label>
 
-      <label class="row">
-        Site tag
-        <input type="text" id="siteTag" list="savedSites" required autocomplete="off" autocapitalize="none" autocorrect="off">
-      </label>
-      <datalist id="savedSites" aria-label="Saved sites" class="row"></datalist>
+          <label class="row">
+            Site tag
+            <input
+              type="text"
+              id="siteTag"
+              list="savedSites"
+              required
+              autocomplete="off"
+              autocapitalize="none"
+              autocorrect="off"
+            />
+          </label>
+          <datalist id="savedSites"></datalist>
 
-      <button type="submit" id="generate">Generate</button>
+          <button type="submit" id="generate">Generate</button>
 
-      <label class="row">
-        Hash
-        <input type="text" id="hash" autocomplete="off">
-      </label>
+          <label class="row">
+            Hash
+            <div class="flex">
+              <input type="text" id="hash" readonly autocomplete="off" />
+              <button id="copy" type="button" class="icon" title="Copy">
+                <svg viewBox="0 0 640 640">
+                  <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                  <path
+                    d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </label>
 
-      <details id="details">
-        <summary>More options</summary>
+          <details id="details">
+            <summary>More options</summary>
 
-        <button type="button" id="reset">Reset</button>
-        <button type="button" id="delete" hidden>Delete saved</button>
+            <button type="button" id="reset">Reset</button>
+            <button type="button" id="delete" hidden>Delete saved</button>
 
-        <div class="buttons">
-          <fieldset>
-            <legend>Requirements</legend>
-            <ul>
-              <li><label><input type="checkbox" id="requireDigit" checked="checked"> Digits</label></li>
-              <li><label><input type="checkbox" id="requirePunctuation"> Punctuation</label></li>
-              <li><label><input type="checkbox" id="requireMixedCase" checked="checked"> Mixed Case</label></li>
-              <li><label><input type="checkbox" id="bangify"> Bangify</label></li>
-            </ul>
-          </fieldset>
+            <fieldset>
+              <legend>Requirements</legend>
+              <ul>
+                <li>
+                  <label
+                    ><input type="checkbox" id="requirePunctuation" />
+                    Punctuation</label
+                  >
+                </li>
+                <li>
+                  <label><input type="checkbox" id="bangify" /> Bangify</label>
+                </li>
+                <li>
+                  <label
+                    ><input type="checkbox" id="restrictSpecial" /> No
+                    Special</label
+                  >
+                </li>
+              </ul>
+            </fieldset>
 
-          <fieldset>
-            <legend>Restrictions</legend>
-            <ul>
-              <li><label><input type="checkbox" id="restrictSpecial"> No Special</label></li>
-              <li><label><input type="checkbox" id="restrictDigits"> Digits Only</label></li>
-            </ul>
-          </fieldset>
-        </div>
-
-        <label class="row">
-          Size <output for="hashWordSize" id="sizeOutput" value="26">26</output>
-          <input type="range" id="hashWordSize" min="4" max="26" value="26" step="2" list="steplist">
-          <div class="range-list">
-            <span class="range-list__min">4</span>
-            <span class="range-list__max">26</span>
-          </div>
-          <datalist id="steplist">
-            <option>4
-            </option><option>6
-            </option><option>8
-            </option><option>10
-            </option><option>12
-            </option><option>14
-            </option><option>16
-            </option><option>18
-            </option><option>20
-            </option><option>22
-            </option><option>24
-            </option><option>26
-          </option></datalist>
-        </label>
-      </details>
-    </form>
-  <script>!function(e){var t={};function s(r){if(t[r])return t[r].exports;var n=t[r]={i:r,l:!1,exports:{}};return e[r].call(n.exports,n,n.exports,s),n.l=!0,n.exports}s.m=e,s.c=t,s.d=function(e,t,r){s.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},s.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},s.t=function(e,t){if(1&t&&(e=s(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(s.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var n in e)s.d(r,n,function(t){return e[t]}.bind(null,n));return r},s.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return s.d(t,"a",t),t},s.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},s.p="",s(s.s=2)}([function(e,t,s){},,function(e,t,s){"use strict";s.r(t);
-/*!
- * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
- * in FIPS PUB 180-1
- * Version 2.1a Copyright Paul Johnston 2000 - 2002.
- * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
- * Distributed under the BSD License
- * See http://pajhome.org.uk/crypt/md5 for details.
- */
-const r=0,n="",i=8;function a(e,t){const s=(65535&e)+(65535&t);return(e>>16)+(t>>16)+(s>>16)<<16|65535&s}function o(e,t){return e<<t|e>>>32-t}function c(e){const t=[],s=(1<<i)-1;for(let r=0;r<e.length*i;r+=i)null!=t[r>>5]?t[r>>5]|=(e.charCodeAt(r/i)&s)<<32-i-r%32:t[r>>5]=(e.charCodeAt(r/i)&s)<<32-i-r%32;return t}function l(e,t,s,r){return e<20?t&s|~t&r:e<40?t^s^r:e<60?t&s|t&r|s&r:t^s^r}function u(e){return e<20?1518500249:e<40?1859775393:e<60?-1894007588:-899497514}function h(e,t){const s=t>>5;null==e[s]?e[s]=128<<24-t%32:e[s]|=128<<24-t%32,e[15+(t+64>>9<<4)]=t;const r=Array(80);let n=1732584193,i=-271733879,c=-1732584194,h=271733878,d=-1009589776;for(let t=0;t<e.length;t+=16){const s=n,g=i,f=c,p=h,b=d;for(let s=0;s<80;s++){r[s]=s<16?e[t+s]:o(r[s-3]^r[s-8]^r[s-14]^r[s-16],1);const g=a(a(o(n,5),l(s,i,c,h)),a(a(d,r[s]),u(s)));d=h,h=c,c=o(i,30),i=n,n=g}n=a(n,s),i=a(i,g),c=a(c,f),h=a(h,p),d=a(d,b)}return[n,i,c,h,d]}const d=(e,t)=>(function(e){let t="";for(let s=0;s<4*e.length;s+=3){const r=(null!=e[s>>2]?(e[s>>2]>>8*(3-s%4)&255)<<16:0)|(null!=e[s+1>>2]?(e[s+1>>2]>>8*(3-(s+1)%4)&255)<<8:0)|(null!=e[s+2>>2]?e[s+2>>2]>>8*(3-(s+2)%4)&255:0);for(let i=0;i<4;i++)8*s+6*i>32*e.length?t+=n:t+="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".charAt(r>>6*(3-i)&63)}return t})(function(e,t){let s=c(e);s.length>16&&(s=h(s,e.length*i));const r=Array(16),n=Array(16);for(let e=0;e<16;e++){const t=null!=s[e]?s[e]:0;r[e]=909522486^t,n[e]=1549556828^t}const a=h(r.concat(c(t)),512+t.length*i);return h(n.concat(a),672)}(e,t)),g=e=>(function(e){const t=r?"0123456789ABCDEF":"0123456789abcdef";let s="";for(let r=0;r<4*e.length;r++)s+=t.charAt(e[r>>2]>>8*(3-r%4)+4&15)+t.charAt(e[r>>2]>>8*(3-r%4)&15);return s})(h(c(e),e.length*i));
-/*!
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Password Hasher
- *
- * The Initial Developer of the Original Code is Steve Cooper.
- * Portions created by the Initial Developer are Copyright (C) 2006
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s): (none)
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- */
-function f(e,t,s,r,n,i,a){const o=r%n,c=(o+t)%n;for(let t=0;t<n-s;t+=1){const r=(o+s+t)%n,c=e.charCodeAt(r);if(c>=i&&c<i+a)return e}return(c>0?e.substring(0,c):"")+String.fromCharCode((r+e.charCodeAt(c))%a+i)+(c+1<e.length?e.substring(c+1,e.length):"")}var p=({siteTag:e,masterKey:t,hashWordSize:s,requireDigit:r,requirePunctuation:n,requireMixedCase:i,restrictSpecial:a,restrictDigits:o,bangify:c})=>{let l=d(t,e),u=0;for(let e=0;e<l.length;e+=1)u+=l.charCodeAt(e);return o?l=function(e,t,s){let r="",n=0;for(;n<s;){const s=e.substring(n).search(/[^0-9]/i);if(s<0)break;s>0&&(r+=e.substring(n,n+s)),r+=String.fromCharCode((t+e.charCodeAt(n))%10+48),n+=s+1}return n<e.length&&(r+=e.substring(n)),r}(l,u,s):(r&&(l=f(l,0,4,u,s,48,10)),n&&!a&&(l=f(l,1,4,u,s,33,15)),i&&(l=f(l,2,4,u,s,65,26),l=f(l,3,4,u,s,97,26)),a&&(l=function(e,t,s){let r="",n=0;for(;n<s;){const s=e.substring(n).search(/[^a-z0-9]/i);if(s<0)break;s>0&&(r+=e.substring(n,n+s)),r+=String.fromCharCode((t+n)%26+65),n+=s+1}return n<e.length&&(r+=e.substring(n)),r}(l,u,s))),l=l.substr(0,s),c&&(l=l.replace(/.$/,"!")),l};const b={tag:"siteTag",size:"hashWordSize",requireSpecial:"restrictSpecial",requireDigitsOnly:"restrictDigits"};const m={requireDigit:!0,requirePunctuation:!1,requireMixedCase:!0,restrictSpecial:!1,restrictDigits:!1,hashWordSize:"26",bangify:!1};function v(e){return document.getElementById(e)}function y(){let e=!1;return t=>{e||(e=!0,setTimeout(()=>e=!1,0),t())}}s(0);new class{constructor(){this.store=new class{entries(){return this.load().entries()}keys(){return this.load().keys()}[Symbol.iterator](){return this.load()[Symbol.iterator]()}set(e,t){const s=this.load();s.set(e,{...t,timestamp:Date.now()}),this.save(s)}has(e){return this.load().has(e)}get(e){return this.load().get(e)}delete(e){const t=this.load();t.delete(e),this.save(t)}load(){try{let e=localStorage.getItem("db329347-75fb-4d26-8f4e-6b887f2f08a9");return(e=JSON.parse(e)||{}).props?e=this.inflate(e):(this.upgrade(e),e=[...Object.entries(e)]),new Map(e)}catch(e){console.error("error loading data",e)}return new Map}save(e){try{localStorage.setItem("db329347-75fb-4d26-8f4e-6b887f2f08a9",JSON.stringify(this.compact([...e])))}catch(e){console.error("error saving data",e)}}compact(e){const t=[],s=e.map(([e,s])=>{const r=[];return Object.entries(s).forEach(([e,s])=>{let n=t.indexOf(e);-1===n&&(n=t.push(e)-1),r[n]=s}),[e,r]});return{props:t,map:s}}inflate({props:e,map:t}){return t.map(([t,s])=>{const r={};return s.forEach((t,s)=>{null!==t&&(r[e[s]]=t)}),[t,r]})}upgrade(e){Object.values(e).forEach(e=>{Object.entries(b).forEach(([t,s])=>{t in e&&(e[s]=e[t],delete e[t])})})}},this.datalistFallback(),this.bindPassword("masterKey"),["siteTag","hash",...Object.keys(m)].forEach(e=>this.bindInput(e)),this.bindListeners(),this.setSettings(),this.updateDatalist(),this.setTimers()}get settings(){return Object.keys(m).reduce((e,t)=>(e[t]=this[t],e),{})}setSettings(e=m){Object.entries(e).forEach(([e,t])=>{this[e]=t})}hasCustomSettings(){return!Object.entries(m).every(([e,t])=>this[e]===t)}bindInput(e){const t=v(e),s="checkbox"===t.type?"checked":"value",r=y();Object.defineProperty(this,e,{enumerable:!0,get:()=>"string"==typeof t[s]?t[s].trim():t[s],set(e){t[s]=e,r(()=>t.dispatchEvent(new Event("change")))}}),t.addEventListener("change",t=>{r(()=>this[e]=t.target[s])})}bindPassword(e){const t=v(e);let s="";const r=y();Object.defineProperty(this,e,{enumerable:!0,get:()=>s,set(e){s=e,t.value=Array(e.length).fill("x").join(""),r(()=>t.dispatchEvent(new Event("change")))}}),t.addEventListener("change",t=>{r(()=>this[e]=t.target.value)})}bindListeners(){Object.entries(Object.getOwnPropertyDescriptors(this.constructor.prototype)).forEach(([e,t])=>{if("function"!=typeof t.value)return;const s=e.match(/^on(.*)(Click|Input|Change|Blur|Focus|Submit|Keypress|Cut|Paste|Keydown)$/);s&&v(function(e){return`${e[0].toLowerCase()}${e.slice(1)}`}(s[1])).addEventListener(s[2].toLowerCase(),t=>{this[e](t)})})}onResetClick(){this.setSettings()}onHashWordSizeInput(e){v("sizeOutput").value=e.target.value}onHashWordSizeChange(e){v("sizeOutput").value=e.target.value}onRestrictSpecialChange(e){v("requirePunctuation").disabled=e.target.checked}onRestrictDigitsChange(e){v("requireDigit").disabled=e.target.checked,v("requirePunctuation").disabled=e.target.checked,v("requireMixedCase").disabled=e.target.checked,v("restrictSpecial").disabled=e.target.checked}onMasterKeyFocus(){this.masterKey="",this.hash=""}onMasterKeyChange(){this.hash=""}onSiteTagChange(e){if(this.hash="",!this.store.has(this.siteTag))return this.setSettings(),void(v("details").open=!1);this.setSettings(this.store.get(e.target.value)),v("delete").hidden=!1,v("details").open=this.hasCustomSettings(),this.masterKey&&this.generateHash()}onDeleteClick(){this.store.delete(this.siteTag),this.updateDatalist(),v("delete").hidden=!0}onFormSubmit(e){e.preventDefault(),this.generateHash(),this.store.set(this.siteTag,this.settings),v("delete").hidden=!1}onHashKeypress(e){e.preventDefault()}onHashKeydown(e){"Backspace"!==e.key&&"Delete"!==e.key||e.preventDefault()}onHashCut(e){e.preventDefault()}onHashPaste(e){e.preventDefault()}onSavedSitesChange(e){this.siteTag=e.target.value}generateHash(){this.hash=p({...this.settings,masterKey:this.masterKey,siteTag:this.siteTag}),v("hash").focus(),v("hash").setSelectionRange(0,this.hash.length),this.updateDatalist()}async onHashChange(e){const t=e.target;if(t.classList.remove("ok","danger","network"),t.title="",0!==t.value.length)try{await(async e=>{const t=g(e).toUpperCase(),s=`https://api.pwnedpasswords.com/range/${t.slice(0,5)}`,r=await fetch(s);if(!r.ok)throw r;const n=await r.text();let i=0;return n.split("\n").some(e=>{const s=e.trim().split(":");return s[0]===t.slice(5)&&(i=+s[1],!0)}),i})(t.value)>0?(t.classList.add("danger"),t.title=`Password compromised ${this.state.pwned} times`):t.classList.add("ok")}catch(e){e instanceof Response?console.error(e):t.classList.add("network")}}updateDatalist(){const e=v("savedSites");e.matches("select")?e.innerHTML='<option value="">Saved sites...</option>':e.innerHTML="",[...this.store.keys()].map(e=>[e.toLowerCase(),e]).sort().map(([,e])=>e).filter(Boolean).forEach(t=>{const s=document.createElement("option");s.value=t,s.label=t,s.innerHTML=t,e.appendChild(s)}),e.value=this.siteTag}setTimers(){let e=Date.now();window.addEventListener("focus",()=>{e+144e5<Date.now()&&(this.masterKey=""),e=Date.now()})}datalistFallback(){if(!v("siteTag").list){const e=v("savedSites"),t=document.createElement("select");t.id="savedSites",t.className=e.className,t.setAttribute("aria-label",e.getAttribute("aria-label")),e.parentNode.insertBefore(t,e.nextSibling),e.remove(),this.bindInput("savedSites"),v("siteTag").addEventListener("change",()=>{v("savedSites").value=this.siteTag})}}},"serviceWorker"in navigator&&navigator.serviceWorker.register("worker.js")}]);</script></body>
+            <label class="row">
+              Size
+              <output for="hashWordSize" id="sizeOutput" value="26">26</output>
+              <input
+                type="range"
+                id="hashWordSize"
+                min="4"
+                max="26"
+                value="26"
+                step="2"
+                list="steplist"
+              />
+              <div class="range-list">
+                <span class="range-list__min">4</span>
+                <span class="range-list__max">26</span>
+              </div>
+              <datalist id="steplist">
+                <option>4</option>
+                <option>6</option>
+                <option>8</option>
+                <option>10</option>
+                <option>12</option>
+                <option>14</option>
+                <option>16</option>
+                <option>18</option>
+                <option>20</option>
+                <option>22</option>
+                <option>24</option>
+                <option>26</option>
+              </datalist>
+            </label>
+            <button type="button" id="export">Export</button>
+            <button type="button" id="import">Import</button>
+          </details>
+        </form>
+        <dialog id="exportDialog">
+          <h1>Export</h1>
+          <textarea readonly id="exportStore"></textarea>
+          <form method="dialog">
+            <button>Close</button>
+          </form>
+        </dialog>
+        <dialog id="importDialog">
+          <h1>Import</h1>
+          <form method="dialog" id="importForm">
+            <textarea id="importStore"></textarea>
+            <button>Import</button>
+          </form>
+        </dialog>
+      </password-hasher>
+    </template>
+  </body>
 </html>

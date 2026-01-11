@@ -1,0 +1,168 @@
+:host {
+  font: 1.2em/1.5 sans-serif;
+  margin: auto;
+  max-width: 20em;
+  padding: 1em;
+}
+
+input,
+button {
+  font: inherit;
+}
+
+datalist {
+  display: none !important;
+}
+
+#hash {
+  font-family: Menlo, Consolas, monospace;
+}
+
+fieldset {
+  margin: 1em 0 0 0;
+  border-color: #eee;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+fieldset > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+input[type='text'],
+input[type='url'],
+input[type='password'],
+textarea,
+select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.2em;
+  line-height: 1.2;
+  font-size: 100%;
+
+  &.ok {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="green" d="M6,10 L2.5,6.5 L0.5,8.5 L6,14 L15.5,4.5 L13.5,2.5 L6,10 Z"></path></svg>')
+      right 5px center / 1em no-repeat;
+    padding-right: 1.5em;
+  }
+
+  &.danger {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path fill="red" d="M92.4,21.7L78.3,7.6c-1.1,0-1.7,0-2.8,0L50,33L24.5,7.6c-1.1,0-1.7,0-2.8,0L7.6,21.7c0,1.1,0,1.7,0,2.8L33,50L7.6,75.5  c0,1.1,0,1.7,0,2.8l14.1,14.1c1.1,0,1.7,0,2.8,0L50,67l25.5,25.5c1.1,0,1.7,0,2.8,0l14.1-14.1c0-1.1,0-1.7,0-2.8L67,50l25.5-25.5  C92.4,23.4,92.4,22.8,92.4,21.7z"></path></svg>')
+      right 5px center / 1em no-repeat;
+    padding-right: 1.5em;
+  }
+
+  &.network {
+    background: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22768%22%20height%3D%22768%22%3E%3Cpath%20d%3D%22M758.4%20713.6L217.6%20172.8%2054.4%209.6c-12.8-12.8-32-12.8-44.8%200s-12.8%2032%200%2044.8l131.2%20131.2c-41.6%2022.4-80%2048-115.2%2080-12.8%2012.8-16%2032-3.2%2044.8%206.4%206.4%2012.8%209.6%2022.4%209.6%206.4%200%2016-3.2%2022.4-9.6%2035.2-32%2076.8-57.6%20121.6-76.8l73.6%2073.6c-44.8%2016-86.4%2038.4-124.8%2067.2-12.8%2012.8-16%2032-3.2%2044.8%206.4%206.4%2016%2012.8%2025.6%2012.8%206.4%200%2016-3.2%2019.2-6.4%2038.4-32%2086.4-54.4%20134.4-67.2l89.6%2089.6c-51.2-3.2-105.6%209.6-147.2%2041.6-16%209.6-19.2%2028.8-6.4%2044.8%209.6%2012.8%2028.8%2019.2%2044.8%206.4%2054.4-38.4%20131.2-38.4%20185.6%200%206.4%203.2%2012.8%206.4%2019.2%206.4h6.4l211.2%20211.2c6.4%206.4%2016%209.6%2022.4%209.6s16-3.2%2022.4-9.6c9.6-12.8%209.6-32-3.2-44.8zM505.6%20339.2c-6.4%2016%200%2035.2%2016%2041.6%2022.4%2012.8%2044.8%2025.6%2067.2%2044.8%206.4%206.4%2012.8%206.4%2019.2%206.4%209.6%200%2019.2-3.2%2025.6-12.8%2012.8-12.8%209.6-35.2-3.2-44.8-25.6-19.2-51.2-38.4-80-51.2-16-6.4-35.2%200-44.8%2016zM345.6%20192c128-9.6%20259.2%2032%20355.2%20118.4%206.4%206.4%2012.8%206.4%2022.4%206.4s19.2-3.2%2025.6-9.6c12.8-12.8%209.6-32-3.2-44.8-108.8-96-256-147.2-403.2-134.4-19.2%200-32%2016-28.8%2035.2%200%2019.2%2012.8%2032%2032%2028.8z%22%2F%3E%3Cpath%20d%3D%22M361.6%20617.6c-6.4%206.4-9.6%2012.8-9.6%2022.4s3.2%2016%209.6%2022.4c6.4%206.4%2012.8%209.6%2022.4%209.6s16-3.2%2022.4-9.6c6.4-6.4%209.6-16%209.6-22.4s-3.2-16-9.6-22.4c-12.8-12.8-32-12.8-44.8%200z%22%2F%3E%3C%2Fsvg%3E')
+      right 5px center / 1em no-repeat;
+    padding-right: 1.5em;
+  }
+}
+
+input[type='range'] {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+input[type='range']::-moz-range-track {
+  background-image: linear-gradient(to right, black 1px, transparent 1px);
+  /* Default thumb size is 1em with a 0.1em border.
+   * The background needs to start the thumb radius (.6em) - tick radius (.5px) in and end .6em short
+   */
+  background-size: calc((100% - 1.2em) / 11) 40px;
+  background-position: calc(0.6em - 0.5px);
+}
+
+textarea {
+  min-height: 20em;
+}
+
+button {
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+
+  &.icon {
+    width: auto;
+    display: flex;
+
+    > svg {
+      width: 1em;
+    }
+  }
+}
+
+dialog {
+  width: 30em;
+
+  &::backdrop {
+    background-color: #99999999;
+    backdrop-filter: blur(2px);
+  }
+}
+
+.row {
+  display: block;
+  margin: 1em 0;
+}
+
+.flex {
+  display: flex;
+  gap: 0.25em;
+}
+
+.buttons {
+  display: flex;
+}
+
+.buttons > button,
+.buttons > * {
+  width: 50%;
+  flex: 1 auto;
+}
+
+fieldset.size > ul {
+  columns: 3;
+}
+
+.hide {
+  display: none;
+}
+
+.no-border {
+  border: none;
+  padding: 0;
+}
+
+.no-border > legend {
+  padding: 0;
+  width: 100%;
+}
+
+[aria-expanded='false']:before {
+  content: '► ';
+}
+
+[aria-expanded='true']:before {
+  content: '▼ ';
+}
+
+.star:after {
+  content: ' ★';
+}
+
+.range-list__min {
+  float: left;
+  font-size: 0.8em;
+  margin-top: -0.5em;
+}
+
+.range-list__max {
+  float: right;
+  font-size: 0.8em;
+  text-align: right;
+  margin-top: -0.5em;
+}
