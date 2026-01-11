@@ -19,9 +19,3 @@ The dingus comes with two default setups, for generating a "short" 12 character 
 Protip: mash on the keyboard for the site-tag and master-password, then click "Short" for a strong, unpredictable Master Password you can memorize for use on the site later.
 
 [Try out the Dingus today!](https://tabatkins.github.io/password)
-
-# TODO
-
-- Update readme
-- Add select on iOS
-- Specify special
