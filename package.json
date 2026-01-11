@@ -1,26 +1,17 @@
 {
   "name": "password",
-  "version": "2.0.7",
+  "version": "3.0.0",
   "description": "Hash based password manager",
-  "main": "src/index.js",
   "scripts": {
     "lint": "npm run lint:format && npm run lint:js",
     "lint:js": "eslint",
     "lint:format": "prettier . --check",
     "format": "prettier . --write",
-    "start": "webpack-dev-server --mode development --inline=false --hot=false",
-    "build": "npm run lint && webpack --mode production",
-    "stats": "webpack --mode production --profile --json",
-    "deploy": "npm run build && gh-pages -d dist"
+    "start": "npx http-server src -c-1",
+    "deploy": "gh-pages -d src"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mrdaniellewis/password.git"
-  },
-  "author": "mrdaniellewis",
+  "author": "danieldevlewis",
   "license": "ISC",
-  "homepage": "https://github.com/mrdaniellewis/password#readme",
-  "dependencies": {},
   "prettier": {
     "singleQuote": true
   },
