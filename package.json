@@ -1,75 +1,26 @@
 {
   "name": "password",
-  "version": "2.0.7",
+  "version": "3.0.0",
   "description": "Hash based password manager",
-  "main": "src/index.js",
   "scripts": {
-    "lint": "eslint . --ext js",
-    "start": "webpack-dev-server --mode development --inline=false --hot=false",
-    "build": "npm run lint && webpack --mode production",
-    "stats": "webpack --mode production --profile --json",
-    "deploy": "npm run build && gh-pages -d dist"
+    "lint": "npm run lint:format && npm run lint:js",
+    "lint:js": "eslint",
+    "lint:format": "prettier . --check",
+    "format": "prettier . --write",
+    "start": "npx http-server src -c-1",
+    "deploy": "gh-pages -d src"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mrdaniellewis/password.git"
-  },
-  "author": "mrdaniellewis",
+  "author": "danieldevlewis",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mrdaniellewis/password/issues"
+  "prettier": {
+    "singleQuote": true
   },
-  "homepage": "https://github.com/mrdaniellewis/password#readme",
   "devDependencies": {
-    "clean-webpack-plugin": "^3.0.0",
-    "css-loader": "^3.0.0",
-    "eslint": "^6.0.1",
-    "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-plugin-import": "^2.18.0",
-    "gh-pages": "^2.0.1",
-    "html-webpack-inline-source-plugin": "0.0.10",
-    "html-webpack-plugin": "^3.2.0",
-    "mini-css-extract-plugin": "^0.7.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "terser-webpack-plugin": "^1.3.0",
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.5",
-    "webpack-dev-server": "^3.7.2",
-    "workbox-webpack-plugin": "^4.3.1"
-  },
-  "eslintConfig": {
-    "extends": "airbnb-base",
-    "env": {
-      "browser": true
-    },
-    "rules": {
-      "brace-style": [
-        "error",
-        "1tbs",
-        {
-          "allowSingleLine": false
-        }
-      ],
-      "class-methods-use-this": "off",
-      "curly": [
-        "error",
-        "all"
-      ],
-      "no-console": [
-        "error",
-        {
-          "allow": [
-            "error"
-          ]
-        }
-      ],
-      "no-param-reassign": "off",
-      "no-restricted-syntax": "off",
-      "no-return-assign": [
-        "error",
-        "except-parens"
-      ],
-      "object-curly-newline": "off"
-    }
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^17.0.0",
+    "prettier": "^3.7.4"
   }
 }

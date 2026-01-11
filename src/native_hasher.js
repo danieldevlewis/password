@@ -1,5 +1,3 @@
-import { b64HmacSha1 } from './sha1';
-
 /*!
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -34,6 +32,30 @@ import { b64HmacSha1 } from './sha1';
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+async function encodeKey(key) {
+  return crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(key),
+    { name: 'HMAC', hash: 'SHA-1' },
+    false,
+    ['sign', 'verify'],
+  );
+}
+
+async function b64HmacSha1(key, data) {
+  const encoder = new TextEncoder();
+  const encoded = encoder.encode(data);
+  const signed = await window.crypto.subtle.sign(
+    'HMAC',
+    await encodeKey(key),
+    encoded,
+  );
+  return btoa(String.fromCharCode(...new Uint8Array(signed))).replace(
+    /=*$/,
+    '',
+  );
+}
+
 /*
  * This is a very specialized method to inject a character chosen from a
  * range of character codes into a block at the front of a string if one of
@@ -47,7 +69,15 @@ import { b64HmacSha1 } from './sha1';
  *  cStart   = character code for first valid injected character.
  *  cNum   = number of valid character codes starting from cStart.
  */
-function injectSpecialCharacter(sInput, offset, reserved, seed, lenOut, cStart, cNum) {
+function injectSpecialCharacter(
+  sInput,
+  offset,
+  reserved,
+  seed,
+  lenOut,
+  cStart,
+  cNum,
+) {
   const pos0 = seed % lenOut;
   const pos = (pos0 + offset) % lenOut;
   // Check if a qualified character is already present
@@ -59,10 +89,13 @@ function injectSpecialCharacter(sInput, offset, reserved, seed, lenOut, cStart, 
       return sInput;
     } // Already present - nothing to do
   }
-  const sHead = (pos > 0 ? sInput.substring(0, pos) : '');
-  const sInject = String.fromCharCode(((seed + sInput.charCodeAt(pos)) % cNum) + cStart);
-  const sTail = (pos + 1 < sInput.length ? sInput.substring(pos + 1, sInput.length) : '');
-  return (sHead + sInject + sTail);
+  const sHead = pos > 0 ? sInput.substring(0, pos) : '';
+  const sInject = String.fromCharCode(
+    ((seed + sInput.charCodeAt(pos)) % cNum) + cStart,
+  );
+  const sTail =
+    pos + 1 < sInput.length ? sInput.substring(pos + 1, sInput.length) : '';
+  return sHead + sInject + sTail;
 }
 
 /*
@@ -85,7 +118,7 @@ function removeSpecialCharacters(sInput, seed, lenOut) {
       s += sInput.substring(i, i + j);
     }
     s += String.fromCharCode(((seed + i) % 26) + 65);
-    i += (j + 1);
+    i += j + 1;
   }
   if (i < sInput.length) {
     s += sInput.substring(i);
@@ -112,7 +145,7 @@ function convertToDigits(sInput, seed, lenOut) {
       s += sInput.substring(i, i + j);
     }
     s += String.fromCharCode(((seed + sInput.charCodeAt(i)) % 10) + 48);
-    i += (j + 1);
+    i += j + 1;
   }
   if (i < sInput.length) {
     s += sInput.substring(i);
@@ -131,19 +164,19 @@ function convertToDigits(sInput, seed, lenOut) {
  * far more difficult to guess the injected special characters without
  * knowing the master key.
  */
-export default ({
+export default async function hash({
   siteTag,
   masterKey,
-  hashWordSize,
-  requireDigit,
+  hashWordSize = 26,
+  requireDigit = true,
   requirePunctuation,
-  requireMixedCase,
+  requireMixedCase = true,
   restrictSpecial,
-  restrictDigits,
+  restrictDigits = false,
   bangify,
-}) => {
+}) {
   // Start with the SHA1-encrypted master key/site tag.
-  let s = b64HmacSha1(masterKey, siteTag);
+  let s = await b64HmacSha1(masterKey, siteTag);
   // Use the checksum of all characters as a pseudo-randomizing seed to
   // avoid making the injected characters easy to guess.  Note that it
   // isn't random in the sense of not being deterministic (i.e.
@@ -176,7 +209,7 @@ export default ({
   }
 
   // Trim it to size
-  s = s.substr(0, hashWordSize);
+  s = s.substring(0, hashWordSize);
 
   // Add a bang at the end
   if (bangify) {
@@ -184,4 +217,4 @@ export default ({
   }
 
   return s;
-};
+}

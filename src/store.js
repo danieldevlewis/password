@@ -1,89 +1,83 @@
 const localStorageKey = 'db329347-75fb-4d26-8f4e-6b887f2f08a9';
-const upgradeKeys = {
-  tag: 'siteTag',
-  size: 'hashWordSize',
-  requireSpecial: 'restrictSpecial',
-  requireDigitsOnly: 'restrictDigits',
-};
 
-export default class {
-  entries() {
-    return this.load().entries();
-  }
+export default class extends Map {
+  #keys;
 
-  keys() {
-    return this.load().keys();
-  }
-
-  [Symbol.iterator]() {
-    return this.load()[Symbol.iterator]();
+  constructor({ keys } = {}) {
+    super();
+    window.addEventListener('storage', () => this.#load());
+    this.#keys = [...keys, 'updated'];
+    this.#load();
   }
 
   set(name, value) {
-    const data = this.load();
-    data.set(name, {
+    const values = {
       ...value,
-      timestamp: Date.now(),
-    });
-    this.save(data);
-  }
-
-  has(name) {
-    return this.load().has(name);
-  }
-
-  get(name) {
-    return this.load().get(name);
+      updated: new Date().valueOf(),
+    };
+    const ret = super.set(name, values);
+    this.#save();
+    return ret;
   }
 
   delete(name) {
-    const data = this.load();
-    data.delete(name);
-    this.save(data);
+    const ret = super.delete(name);
+    this.#save();
+    return ret;
   }
 
-  load() {
-    try {
-      let data = localStorage.getItem(localStorageKey);
-      data = JSON.parse(data) || {};
-      if (data.props) {
-        data = this.inflate(data);
-      } else {
-        this.upgrade(data);
-        data = [...Object.entries(data)];
+  import(data) {
+    for (const [key, value] of Object.entries(data)) {
+      const updated = this.has(key)
+        ? this.get(key)?.updated || Infinity
+        : -Infinity;
+      if (updated < (data.updated || Date.now())) {
+        super.set(key, value);
       }
-      return new Map(data);
+    }
+  }
+
+  #load() {
+    try {
+      const data = JSON.parse(localStorage.getItem(localStorageKey)) || {
+        props: [],
+        map: [],
+      };
+      this.clear();
+      this.#inflate(data).forEach(([key, value]) => super.set(key, value));
     } catch (e) {
       console.error('error loading data', e);
     }
-    return new Map();
   }
 
-  save(data) {
+  #save() {
     try {
-      localStorage.setItem(localStorageKey, JSON.stringify(this.compact([...data])));
+      localStorage.setItem(localStorageKey, JSON.stringify(this.#compacted()));
     } catch (e) {
       console.error('error saving data', e);
     }
   }
 
-  compact(data) {
+  #compacted() {
     const props = [];
-    const map = data.map(([name, ob]) => {
+    const map = [...this.entries()].map(([name, values]) => {
       const mapped = [];
-      Object.entries(ob).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(values)) {
+        if (!this.#keys.includes(key)) {
+          continue;
+        }
         let index = props.indexOf(key);
         if (index === -1) {
           index = props.push(key) - 1;
         }
         mapped[index] = value;
-      });
+      }
       return [name, mapped];
     });
     return { props, map };
   }
 
-  inflate({ props, map }) {
+  #inflate({ props, map }) {
     return map.map(([name, array]) => {
       const mapped = {};
       array.forEach((value, index) => {
@@ -92,17 +86,6 @@ export default class {
         }
       });
       return [name, mapped];
-    });
-  }
-
-  upgrade(data) {
-    Object.values(data).forEach((item) => {
-      Object.entries(upgradeKeys).forEach(([key, newKey]) => {
-        if (key in item) {
-          item[newKey] = item[key];
-          delete item[key];
-        }
-      });
     });
   }
 }
