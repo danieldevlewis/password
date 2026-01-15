@@ -35,6 +35,15 @@ export default class extends Map {
         super.set(key, value);
       }
     }
+    this.#save();
+  }
+
+  #save() {
+    try {
+      localStorage.setItem(localStorageKey, JSON.stringify(this.#compacted()));
+    } catch (e) {
+      console.error('error saving data', e);
+    }
   }
 
   #load() {
@@ -47,14 +56,6 @@ export default class extends Map {
       this.#inflate(data).forEach(([key, value]) => super.set(key, value));
     } catch (e) {
       console.error('error loading data', e);
-    }
-  }
-
-  #save() {
-    try {
-      localStorage.setItem(localStorageKey, JSON.stringify(this.#compacted()));
-    } catch (e) {
-      console.error('error saving data', e);
     }
   }
 
