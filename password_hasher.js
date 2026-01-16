@@ -52,7 +52,7 @@ class PasswordHasher extends HTMLElement {
   #onMasterKeyChange = ({ target }) => {
     target.value = target.value.trim();
     this.#masterKey = target.value;
-    target.value = Array(target.value.length).fill('#').join('');
+    target.value = Array(target.value.length).fill('●').join('');
     this.#checkPwnage(this.#masterKey, target);
   };
 
