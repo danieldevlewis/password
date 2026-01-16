@@ -30,20 +30,20 @@
     <template shadowrootmode="closed">
       <link rel="stylesheet" href="style.css" />
       <password-hasher>
-        <form id="form">
-          <label class="row">
-            Master Key
+        <form id="form" autocomplete="off">
+          <div class="row">
+            <label for="masterKey"> Master Key </label>
             <input
               id="masterKey"
-              type="password"
+              type="text"
               autofocus
               autocomplete="off"
               required
             />
-          </label>
+          </div>
 
-          <label class="row">
-            Site tag
+          <div class="row">
+            <label for="siteTag"> Site tag </label>
             <input
               type="text"
               id="siteTag"
@@ -53,8 +53,8 @@
               autocapitalize="none"
               autocorrect="off"
             />
-          </label>
-          <datalist id="savedSites"></datalist>
+            <datalist id="savedSites"></datalist>
+          </div>
 
           <button type="submit" id="generate">Generate</button>
 
@@ -136,16 +136,20 @@
           </details>
         </form>
         <dialog id="exportDialog">
-          <h1>Export</h1>
-          <textarea readonly id="exportStore"></textarea>
+          <h1 id="exportLabel">Export</h1>
+          <textarea
+            readonly
+            id="exportStore"
+            aria-labelledby="exportLabel"
+          ></textarea>
           <form method="dialog">
             <button>Close</button>
           </form>
         </dialog>
         <dialog id="importDialog">
-          <h1>Import</h1>
+          <h1 id="importLabel">Import</h1>
           <form method="dialog" id="importForm">
-            <textarea id="importStore"></textarea>
+            <textarea id="importStore" aria-labelledby="importLabel"></textarea>
             <button>Import</button>
           </form>
         </dialog>
