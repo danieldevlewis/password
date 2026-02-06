@@ -53,6 +53,7 @@ class PasswordHasher extends HTMLElement {
   #onMasterKeyFocus = ({ target }) => {
     this.#masterKey = '';
     this.#mask = [];
+    this.#id('hash').value = '';
     target.value = '';
     target.classList.remove('ok', 'danger', 'network');
   };
@@ -265,6 +266,7 @@ class PasswordHasher extends HTMLElement {
         this.masterKey = null;
         this.#id('masterKey').value = '';
         this.#id('masterKey').classList.remove('ok', 'danger', 'network');
+        this.#id('hash').value = '';
       },
       4 * 60 * 60 * 1000,
     );
