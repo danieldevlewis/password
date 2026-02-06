@@ -11,6 +11,7 @@ const defaultSettings = {
 
 class PasswordHasher extends HTMLElement {
   #masterKey;
+  #mask;
   #localStore;
   #clearTimeout;
 
@@ -18,7 +19,11 @@ class PasswordHasher extends HTMLElement {
     this.#localStore = new Store({ keys: Object.keys(defaultSettings) });
     this.#updateDataList();
     this.#setClearTimeout();
-    this.#id('masterKey').addEventListener('input', this.#onMasterKeyInput);
+    this.#id('masterKey').addEventListener('focus', this.#onMasterKeyFocus);
+    this.#id('masterKey').addEventListener(
+      'beforeinput',
+      this.#onMasterKeyBeforeInput,
+    );
     this.#id('masterKey').addEventListener('change', this.#onMasterKeyChange);
     this.#id('form').addEventListener('submit', this.#onSubmit);
     this.#id('siteTag').addEventListener('change', this.#onSiteTagChange);
@@ -45,14 +50,89 @@ class PasswordHasher extends HTMLElement {
     };
   }
 
-  #onMasterKeyInput = ({ target }) => {
+  #onMasterKeyFocus = ({ target }) => {
+    this.#masterKey = '';
+    this.#mask = [];
+    target.value = '';
     target.classList.remove('ok', 'danger', 'network');
   };
 
+  #onMasterKeyBeforeInput = (e) => {
+    // If iOS gets a whiff of a password field it insists
+    // on trying to save everything to passwords
+    // which breaks the datalist UI on the site tag
+    // Therefore simulate a password field
+    const {
+      data,
+      inputType,
+      target,
+      target: { selectionStart, selectionEnd },
+    } = e;
+    const editId = crypto.randomUUID();
+    switch (inputType) {
+      case 'insertText':
+      case 'insertFromPaste':
+        this.#masterKey =
+          this.#masterKey.slice(0, selectionStart) +
+          data +
+          this.#masterKey.slice(selectionEnd);
+        this.#mask.splice(
+          selectionStart,
+          0,
+          ...Array(data.length).fill(editId),
+        );
+        break;
+      case 'deleteContentBackward':
+        if (selectionStart === selectionEnd) {
+          this.#masterKey =
+            this.#masterKey.slice(0, selectionStart - 1) +
+            this.#masterKey.slice(selectionStart);
+          this.#mask.splice(selectionStart - 1, 1);
+        } else {
+          this.#masterKey =
+            this.#masterKey.slice(0, selectionStart) +
+            this.#masterKey.slice(selectionEnd);
+          this.#mask.splice(selectionStart, selectionEnd - selectionStart);
+        }
+        break;
+      case 'deleteContentForward':
+        if (selectionStart === selectionEnd) {
+          this.#masterKey =
+            this.#masterKey.slice(0, selectionStart) +
+            this.#masterKey.slice(selectionStart + 1);
+          this.#mask.splice(selectionStart + 1, 1);
+        } else {
+          this.#masterKey =
+            this.#masterKey.slice(0, selectionStart) +
+            this.#masterKey.slice(selectionEnd);
+          this.#mask.splice(selectionStart, selectionEnd - selectionStart);
+        }
+        break;
+      case 'deleteContent':
+        this.#masterKey =
+          this.#masterKey.slice(0, selectionStart) +
+          this.#masterKey.slice(selectionEnd);
+        this.#mask.splice(selectionStart, selectionEnd - selectionStart);
+        break;
+    }
+
+    setTimeout(() => {
+      const { selectionStart, selectionEnd, selectionDirection } = target;
+      target.value = target.value
+        .split('')
+        .map((c, i) => (this.#mask[i] === editId ? '•' : c))
+        .join('');
+      target.setSelectionRange(
+        selectionStart,
+        selectionEnd,
+        selectionDirection,
+      );
+    }, 500);
+  };
+
   #onMasterKeyChange = ({ target }) => {
-    target.value = target.value.trim();
-    this.#masterKey = target.value;
-    target.value = Array(target.value.length).fill('●').join('');
+    target.value = Array(target.value.length).fill('•').join('');
+    this.#masterKey = this.#masterKey.trim();
     this.#checkPwnage(this.#masterKey, target);
   };
 
