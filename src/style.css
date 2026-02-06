@@ -5,6 +5,13 @@
   padding: 1em;
 }
 
+password-hasher {
+  /* Hacky way to avoid the flash of unstyled content 
+   * Due to the component living in a shadowdom
+   */
+  display: block !important;
+}
+
 input,
 button {
   font: inherit;
