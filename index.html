@@ -1,12 +1,11 @@
 <!doctype html>
 <html language="en-gb">
-  <head>
-    <meta charset="utf-8" />
-    <title>Password hasher</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="
+
+<head>
+  <meta charset="utf-8" />
+  <title>Password hasher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="
       default-src 'none';
       img-src 'self' data:;
       script-src 'self';
@@ -14,146 +13,112 @@
       manifest-src 'self';
       frame-ancestors 'none';
       connect-src https://api.pwnedpasswords.com/range/;
-    "
-    />
-    <link rel="icon" href="favicon.svg" sizes="any" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="icon-180.png" />
-    <link rel="manifest" href="manifest.json" />
-    <script
-      type="module"
-      defer
-      src="index.js"
-      integrity="sha256-I8ngvD9a+w9TfrMu6ZiZkuGvvCwTwY1RwKa79VsXnr0="
-    ></script>
-  </head>
-  <body>
-    <template shadowrootmode="closed">
-      <link rel="stylesheet" href="style.css" />
-      <password-hasher>
-        <form id="form" autocomplete="off">
-          <div class="row">
-            <label for="masterKey"> Master Key </label>
-            <input
-              id="masterKey"
-              type="text"
-              autofocus
-              autocomplete="off"
-              required
-            />
-          </div>
+    " />
+  <link rel="icon" href="favicon.svg" sizes="any" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="manifest" href="manifest.json" />
+  <script type="module" defer src="index.js" integrity="sha256-I8ngvD9a+w9TfrMu6ZiZkuGvvCwTwY1RwKa79VsXnr0="></script>
+</head>
 
-          <div class="row">
-            <label for="siteTag"> Site tag </label>
-            <input
-              type="text"
-              id="siteTag"
-              list="savedSites"
-              required
-              autocomplete="off"
-              autocapitalize="none"
-              autocorrect="off"
-            />
-            <datalist id="savedSites"></datalist>
-          </div>
+<body>
+  <template shadowrootmode="closed">
+    <link rel="stylesheet" href="style.css" />
+    <password-hasher hidden>
+      <form id="form" autocomplete="off">
+        <div class="row">
+          <label for="masterKey"> Master Key </label>
+          <input id="masterKey" type="text" autofocus autocomplete="off" required />
+        </div>
 
-          <button type="submit" id="generate">Generate</button>
+        <div class="row">
+          <label for="siteTag"> Site tag </label>
+          <input type="text" id="siteTag" list="savedSites" required autocomplete="off" autocapitalize="none"
+            autocorrect="off" />
+          <datalist id="savedSites"></datalist>
+        </div>
+
+        <button type="submit" id="generate">Generate</button>
+
+        <label class="row">
+          Hash
+          <div class="flex">
+            <input type="text" id="hash" readonly autocomplete="off" />
+            <button id="copy" type="button" class="icon" title="Copy">
+              <svg viewBox="0 0 640 640">
+                <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                <path
+                  d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z" />
+              </svg>
+            </button>
+          </div>
+        </label>
+
+        <details id="details">
+          <summary>More options</summary>
+
+          <button type="button" id="reset">Reset</button>
+          <button type="button" id="delete" hidden>Delete saved</button>
+
+          <fieldset>
+            <legend>Requirements</legend>
+            <ul>
+              <li>
+                <label><input type="checkbox" id="requirePunctuation" />
+                  Punctuation</label>
+              </li>
+              <li>
+                <label><input type="checkbox" id="bangify" /> Bangify</label>
+              </li>
+              <li>
+                <label><input type="checkbox" id="restrictSpecial" /> No
+                  Special</label>
+              </li>
+            </ul>
+          </fieldset>
 
           <label class="row">
-            Hash
-            <div class="flex">
-              <input type="text" id="hash" readonly autocomplete="off" />
-              <button id="copy" type="button" class="icon" title="Copy">
-                <svg viewBox="0 0 640 640">
-                  <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
-                  <path
-                    d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z"
-                  />
-                </svg>
-              </button>
+            Size
+            <output for="hashWordSize" id="sizeOutput" value="26">26</output>
+            <input type="range" id="hashWordSize" min="4" max="26" value="26" step="2" list="steplist" />
+            <div class="range-list">
+              <span class="range-list__min">4</span>
+              <span class="range-list__max">26</span>
             </div>
+            <datalist id="steplist">
+              <option>4</option>
+              <option>6</option>
+              <option>8</option>
+              <option>10</option>
+              <option>12</option>
+              <option>14</option>
+              <option>16</option>
+              <option>18</option>
+              <option>20</option>
+              <option>22</option>
+              <option>24</option>
+              <option>26</option>
+            </datalist>
           </label>
-
-          <details id="details">
-            <summary>More options</summary>
-
-            <button type="button" id="reset">Reset</button>
-            <button type="button" id="delete" hidden>Delete saved</button>
-
-            <fieldset>
-              <legend>Requirements</legend>
-              <ul>
-                <li>
-                  <label
-                    ><input type="checkbox" id="requirePunctuation" />
-                    Punctuation</label
-                  >
-                </li>
-                <li>
-                  <label><input type="checkbox" id="bangify" /> Bangify</label>
-                </li>
-                <li>
-                  <label
-                    ><input type="checkbox" id="restrictSpecial" /> No
-                    Special</label
-                  >
-                </li>
-              </ul>
-            </fieldset>
-
-            <label class="row">
-              Size
-              <output for="hashWordSize" id="sizeOutput" value="26">26</output>
-              <input
-                type="range"
-                id="hashWordSize"
-                min="4"
-                max="26"
-                value="26"
-                step="2"
-                list="steplist"
-              />
-              <div class="range-list">
-                <span class="range-list__min">4</span>
-                <span class="range-list__max">26</span>
-              </div>
-              <datalist id="steplist">
-                <option>4</option>
-                <option>6</option>
-                <option>8</option>
-                <option>10</option>
-                <option>12</option>
-                <option>14</option>
-                <option>16</option>
-                <option>18</option>
-                <option>20</option>
-                <option>22</option>
-                <option>24</option>
-                <option>26</option>
-              </datalist>
-            </label>
-            <button type="button" id="export">Export</button>
-            <button type="button" id="import">Import</button>
-          </details>
+          <button type="button" id="export">Export</button>
+          <button type="button" id="import">Import</button>
+        </details>
+      </form>
+      <dialog id="exportDialog">
+        <h1 id="exportLabel">Export</h1>
+        <textarea readonly id="exportStore" aria-labelledby="exportLabel"></textarea>
+        <form method="dialog">
+          <button>Close</button>
         </form>
-        <dialog id="exportDialog">
-          <h1 id="exportLabel">Export</h1>
-          <textarea
-            readonly
-            id="exportStore"
-            aria-labelledby="exportLabel"
-          ></textarea>
-          <form method="dialog">
-            <button>Close</button>
-          </form>
-        </dialog>
-        <dialog id="importDialog">
-          <h1 id="importLabel">Import</h1>
-          <form method="dialog" id="importForm">
-            <textarea id="importStore" aria-labelledby="importLabel"></textarea>
-            <button>Import</button>
-          </form>
-        </dialog>
-      </password-hasher>
-    </template>
-  </body>
+      </dialog>
+      <dialog id="importDialog">
+        <h1 id="importLabel">Import</h1>
+        <form method="dialog" id="importForm">
+          <textarea id="importStore" aria-labelledby="importLabel"></textarea>
+          <button>Import</button>
+        </form>
+      </dialog>
+    </password-hasher>
+  </template>
+</body>
+
 </html>
