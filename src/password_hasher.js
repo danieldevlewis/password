@@ -90,6 +90,9 @@ class PasswordHasher extends HTMLElement {
           0,
           ...Array(data.length).fill(editId),
         );
+        // iOS inserts an extra space before pastes
+        // BUT does not include it in data
+        // So handle this manually
         e.preventDefault();
         target.value =
           target.value.slice(0, selectionStart) +
