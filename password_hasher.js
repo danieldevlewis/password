@@ -63,15 +63,26 @@ class PasswordHasher extends HTMLElement {
     // on trying to save everything to passwords
     // which breaks the datalist UI on the site tag
     // Therefore simulate a password field
+    console.log('beforeinput');
     const {
       data,
       inputType,
       target,
-      target: { selectionStart, selectionEnd },
+      target: { selectionStart, selectionEnd, selectionDirection },
     } = e;
     const editId = crypto.randomUUID();
     switch (inputType) {
       case 'insertText':
+        this.#masterKey =
+          this.#masterKey.slice(0, selectionStart) +
+          data +
+          this.#masterKey.slice(selectionEnd);
+        this.#mask.splice(
+          selectionStart,
+          0,
+          ...Array(data.length).fill(editId),
+        );
+        break;
       case 'insertFromPaste':
         this.#masterKey =
           this.#masterKey.slice(0, selectionStart) +
@@ -81,6 +92,16 @@ class PasswordHasher extends HTMLElement {
           selectionStart,
           0,
           ...Array(data.length).fill(editId),
+        );
+        e.preventDefault();
+        target.value =
+          target.value.slice(0, selectionStart) +
+          data +
+          target.value.slice(selectionEnd);
+        target.setSelectionRange(
+          selectionStart + data.length,
+          selectionStart + data.length,
+          selectionDirection,
         );
         break;
       case 'deleteContentBackward':
