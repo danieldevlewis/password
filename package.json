@@ -8,6 +8,7 @@
     "lint:format": "prettier . --check",
     "format": "prettier . --write",
     "start": "npx http-server src -c-1",
+    "predeploy": "npm run lint",
     "deploy": "npx gh-pages -d src"
   },
   "author": "danieldevlewis",
