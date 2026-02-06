@@ -50,12 +50,10 @@ class PasswordHasher extends HTMLElement {
     };
   }
 
-  #onMasterKeyFocus = ({ target }) => {
+  #onMasterKeyFocus = () => {
+    this.#clearMasterKey();
     this.#masterKey = '';
     this.#mask = [];
-    this.#id('hash').value = '';
-    target.value = '';
-    target.classList.remove('ok', 'danger', 'network');
   };
 
   #onMasterKeyBeforeInput = (e) => {
@@ -63,7 +61,6 @@ class PasswordHasher extends HTMLElement {
     // on trying to save everything to passwords
     // which breaks the datalist UI on the site tag
     // Therefore simulate a password field
-    console.log('beforeinput');
     const {
       data,
       inputType,
@@ -284,10 +281,7 @@ class PasswordHasher extends HTMLElement {
     window.clearTimeout(this.#clearTimeout);
     this.#clearTimeout = window.setTimeout(
       () => {
-        this.masterKey = null;
-        this.#id('masterKey').value = '';
-        this.#id('masterKey').classList.remove('ok', 'danger', 'network');
-        this.#id('hash').value = '';
+        this.#clearMasterKey();
       },
       4 * 60 * 60 * 1000,
     );
@@ -315,6 +309,14 @@ class PasswordHasher extends HTMLElement {
       alert(`Invalid data ${e.message}`);
     }
   };
+
+  #clearMasterKey() {
+    this.#masterKey = null;
+    this.#id('masterKey').value = '';
+    this.#id('masterKey').classList.remove('ok', 'danger', 'network');
+    this.#id('hash').value = '';
+    this.#id('hash').classList.remove('ok', 'danger', 'network');
+  }
 }
 
 customElements.define('password-hasher', PasswordHasher);
