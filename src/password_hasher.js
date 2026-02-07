@@ -13,12 +13,11 @@ class PasswordHasher extends HTMLElement {
   #masterKey;
   #mask;
   #localStore;
-  #clearTimeout;
+  #windowFocusDate = Date.now();
 
   connectedCallback() {
     this.#localStore = new Store({ keys: Object.keys(defaultSettings) });
     this.#updateDataList();
-    this.#setClearTimeout();
     this.#id('masterKey').addEventListener('focus', this.#onMasterKeyFocus);
     this.#id('masterKey').addEventListener(
       'beforeinput',
@@ -38,7 +37,7 @@ class PasswordHasher extends HTMLElement {
       'change',
       this.#onHashWordSizeChange,
     );
-    window.addEventListener('focus', () => this.#setClearTimeout());
+    window.addEventListener('focus', this.#onWindowFocus);
   }
 
   #id(id) {
@@ -285,15 +284,13 @@ class PasswordHasher extends HTMLElement {
     this.#onHashWordSizeChange();
   }
 
-  #setClearTimeout() {
-    window.clearTimeout(this.#clearTimeout);
-    this.#clearTimeout = window.setTimeout(
-      () => {
-        this.#clearMasterKey();
-      },
-      4 * 60 * 60 * 1000,
-    );
-  }
+  #onWindowFocus = () => {
+    console.log('show', Date.now(), this.#windowFocusDate);
+    if (Date.now() > this.#windowFocusDate + 4 * 60 * 60 * 1000) {
+      this.#clearMasterKey();
+    }
+    this.#windowFocusDate = Date.now();
+  };
 
   #onExportClick = () => {
     this.querySelector('#exportDialog').showModal();
