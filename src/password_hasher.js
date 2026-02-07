@@ -34,6 +34,10 @@ class PasswordHasher extends HTMLElement {
     this.#id('export').addEventListener('click', this.#onExportClick);
     this.#id('import').addEventListener('click', this.#onImportClick);
     this.#id('importForm').addEventListener('submit', this.#onImportSubmit);
+    this.#id('hashWordSize').addEventListener(
+      'change',
+      this.#onHashWordSizeChange,
+    );
     window.addEventListener('focus', () => this.#setClearTimeout());
   }
 
@@ -278,6 +282,7 @@ class PasswordHasher extends HTMLElement {
     this.#id('restrictSpecial').checked = settings.restrictSpecial;
     this.#id('hashWordSize').value = settings.hashWordSize;
     this.#id('bangify').checked = settings.bangify;
+    this.#onHashWordSizeChange();
   }
 
   #setClearTimeout() {
@@ -311,6 +316,10 @@ class PasswordHasher extends HTMLElement {
       e.preventDefault();
       alert(`Invalid data ${e.message}`);
     }
+  };
+
+  #onHashWordSizeChange = () => {
+    this.#id('sizeOutput').innerText = this.#id('hashWordSize').value;
   };
 
   #clearMasterKey() {
