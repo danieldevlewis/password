@@ -13,12 +13,11 @@ class PasswordHasher extends HTMLElement {
   #masterKey;
   #mask;
   #localStore;
-  #clearTimeout;
+  #windowFocusDate = Date.now();
 
   connectedCallback() {
     this.#localStore = new Store({ keys: Object.keys(defaultSettings) });
     this.#updateDataList();
-    this.#setClearTimeout();
     this.#id('masterKey').addEventListener('focus', this.#onMasterKeyFocus);
     this.#id('masterKey').addEventListener(
       'beforeinput',
@@ -34,7 +33,11 @@ class PasswordHasher extends HTMLElement {
     this.#id('export').addEventListener('click', this.#onExportClick);
     this.#id('import').addEventListener('click', this.#onImportClick);
     this.#id('importForm').addEventListener('submit', this.#onImportSubmit);
-    window.addEventListener('focus', () => this.#setClearTimeout());
+    this.#id('hashWordSize').addEventListener(
+      'change',
+      this.#onHashWordSizeChange,
+    );
+    window.addEventListener('focus', this.#onWindowFocus);
   }
 
   #id(id) {
@@ -90,6 +93,9 @@ class PasswordHasher extends HTMLElement {
           0,
           ...Array(data.length).fill(editId),
         );
+        // iOS inserts an extra space before pastes
+        // BUT does not include it in data
+        // So handle this manually
         e.preventDefault();
         target.value =
           target.value.slice(0, selectionStart) +
@@ -275,17 +281,16 @@ class PasswordHasher extends HTMLElement {
     this.#id('restrictSpecial').checked = settings.restrictSpecial;
     this.#id('hashWordSize').value = settings.hashWordSize;
     this.#id('bangify').checked = settings.bangify;
+    this.#onHashWordSizeChange();
   }
 
-  #setClearTimeout() {
-    window.clearTimeout(this.#clearTimeout);
-    this.#clearTimeout = window.setTimeout(
-      () => {
-        this.#clearMasterKey();
-      },
-      4 * 60 * 60 * 1000,
-    );
-  }
+  #onWindowFocus = () => {
+    console.log('show', Date.now(), this.#windowFocusDate);
+    if (Date.now() > this.#windowFocusDate + 4 * 60 * 60 * 1000) {
+      this.#clearMasterKey();
+    }
+    this.#windowFocusDate = Date.now();
+  };
 
   #onExportClick = () => {
     this.querySelector('#exportDialog').showModal();
@@ -308,6 +313,10 @@ class PasswordHasher extends HTMLElement {
       e.preventDefault();
       alert(`Invalid data ${e.message}`);
     }
+  };
+
+  #onHashWordSizeChange = () => {
+    this.#id('sizeOutput').innerText = this.#id('hashWordSize').value;
   };
 
   #clearMasterKey() {
