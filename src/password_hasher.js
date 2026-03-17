@@ -11,7 +11,6 @@ const defaultSettings = {
 
 class PasswordHasher extends HTMLElement {
   #masterKey;
-  #mask;
   #localStore;
   #windowFocusDate = Date.now();
 
@@ -23,6 +22,7 @@ class PasswordHasher extends HTMLElement {
       'beforeinput',
       this.#onMasterKeyBeforeInput,
     );
+    this.#id('masterKey').addEventListener('input', this.#onMasterKeyInput);
     this.#id('masterKey').addEventListener('change', this.#onMasterKeyChange);
     this.#id('form').addEventListener('submit', this.#onSubmit);
     this.#id('siteTag').addEventListener('change', this.#onSiteTagChange);
@@ -56,7 +56,6 @@ class PasswordHasher extends HTMLElement {
   #onMasterKeyFocus = () => {
     this.#clearMasterKey();
     this.#masterKey = '';
-    this.#mask = [];
   };
 
   #onMasterKeyBeforeInput = (e) => {
@@ -70,29 +69,19 @@ class PasswordHasher extends HTMLElement {
       target,
       target: { selectionStart, selectionEnd, selectionDirection },
     } = e;
-    const editId = crypto.randomUUID();
     switch (inputType) {
       case 'insertText':
         this.#masterKey =
           this.#masterKey.slice(0, selectionStart) +
           data +
           this.#masterKey.slice(selectionEnd);
-        this.#mask.splice(
-          selectionStart,
-          0,
-          ...Array(data.length).fill(editId),
-        );
         break;
       case 'insertFromPaste':
         this.#masterKey =
           this.#masterKey.slice(0, selectionStart) +
           data +
           this.#masterKey.slice(selectionEnd);
-        this.#mask.splice(
-          selectionStart,
-          0,
-          ...Array(data.length).fill(editId),
-        );
+
         // iOS inserts an extra space before pastes
         // BUT does not include it in data
         // So handle this manually
@@ -112,12 +101,10 @@ class PasswordHasher extends HTMLElement {
           this.#masterKey =
             this.#masterKey.slice(0, selectionStart - 1) +
             this.#masterKey.slice(selectionStart);
-          this.#mask.splice(selectionStart - 1, 1);
         } else {
           this.#masterKey =
             this.#masterKey.slice(0, selectionStart) +
             this.#masterKey.slice(selectionEnd);
-          this.#mask.splice(selectionStart, selectionEnd - selectionStart);
         }
         break;
       case 'deleteContentForward':
@@ -125,34 +112,27 @@ class PasswordHasher extends HTMLElement {
           this.#masterKey =
             this.#masterKey.slice(0, selectionStart) +
             this.#masterKey.slice(selectionStart + 1);
-          this.#mask.splice(selectionStart + 1, 1);
         } else {
           this.#masterKey =
             this.#masterKey.slice(0, selectionStart) +
             this.#masterKey.slice(selectionEnd);
-          this.#mask.splice(selectionStart, selectionEnd - selectionStart);
         }
         break;
       case 'deleteContent':
         this.#masterKey =
           this.#masterKey.slice(0, selectionStart) +
           this.#masterKey.slice(selectionEnd);
-        this.#mask.splice(selectionStart, selectionEnd - selectionStart);
         break;
     }
+  };
 
-    setTimeout(() => {
-      const { selectionStart, selectionEnd, selectionDirection } = target;
-      target.value = target.value
-        .split('')
-        .map((c, i) => (this.#mask[i] === editId ? '•' : c))
-        .join('');
-      target.setSelectionRange(
-        selectionStart,
-        selectionEnd,
-        selectionDirection,
-      );
-    }, 500);
+  #onMasterKeyInput = (e) => {
+    const {
+      target,
+      target: { selectionStart, selectionEnd, selectionDirection },
+    } = e;
+    target.value = Array(target.value.length).fill('•').join('');
+    target.setSelectionRange(selectionStart, selectionEnd, selectionDirection);
   };
 
   #onMasterKeyChange = ({ target }) => {
@@ -285,7 +265,6 @@ class PasswordHasher extends HTMLElement {
   }
 
   #onWindowFocus = () => {
-    console.log('show', Date.now(), this.#windowFocusDate);
     if (Date.now() > this.#windowFocusDate + 4 * 60 * 60 * 1000) {
       this.#clearMasterKey();
     }
