@@ -55,7 +55,6 @@ class PasswordHasher extends HTMLElement {
 
   #onMasterKeyFocus = () => {
     this.#clearMasterKey();
-    this.#masterKey = '';
   };
 
   #onMasterKeyBeforeInput = (e) => {
@@ -63,6 +62,7 @@ class PasswordHasher extends HTMLElement {
     // on trying to save everything to passwords
     // which breaks the datalist UI on the site tag
     // Therefore simulate a password field
+    this.#masterKey ||= '';
     const {
       data,
       inputType,
@@ -124,6 +124,7 @@ class PasswordHasher extends HTMLElement {
           this.#masterKey.slice(selectionEnd);
         break;
     }
+    console.log(this.#masterKey);
   };
 
   #onMasterKeyInput = (e) => {
